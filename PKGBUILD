@@ -14,21 +14,27 @@ license=('GPL3')
 depends=('fuse' 'virtualbox' 'virtualbox-sdk')
 makedepends=('pkgconfig')
 install="${pkgname}.install"
-source=("https://launchpad.net/debian/+archive/primary/+sourcefiles/virtualbox/4.1.42-dfsg-1+deb7u1/virtualbox_4.1.42-dfsg-1+deb7u1.debian.tar.xz"
+source=("https://launchpadlibrarian.net/108890943/vdfuse_RAW.201206282340UTC.patch"
+        "https://launchpad.net/debian/+archive/primary/+sourcefiles/virtualbox/4.1.42-dfsg-1+deb7u1/virtualbox_4.1.42-dfsg-1+deb7u1.debian.tar.xz"
         "https://github.com/muflone/virtualbox-includes/archive/${_headers}.tar.gz"
-        "vdautomount"::"http://forums.virtualbox.org/download/file.php?id=2865"
+	"vdautomount"::"http://forums.virtualbox.org/download/file.php?id=2865"
         "add-typedef-to-PARTITIONING_TYPE_vd.h.patch"
         "init-VDINTERFACEERROR_vdfuse.c.patch")
-sha256sums=('54af4a721b6534de5f23f86e6d644d3e5b03383f2d1d90f4dbfeff84bbed47e9'
+sha256sums=('2336c67e06262f9c0ff09caac8bc269411769c1652e541d8d7a120b65dad9934'
+	    '54af4a721b6534de5f23f86e6d644d3e5b03383f2d1d90f4dbfeff84bbed47e9'
             '357d0cc778f33684d158e60acae9478b26256af39b31bed19556c0928f133001'
             '28b4ce0e0ca72721e0dbbdc776e5c3aa47b160afa8538064497be68da4713493'
             '98f3a12fd288b650879822655c8c2ead10a630aa9637a186c7289c1f2f015c31'
-            'c4ae283a2f94ac81615c3b3d5f6a3c93d1d03438ee9f1e2520f8e2043b9aa1c0')
+	    'c4ae283a2f94ac81615c3b3d5f6a3c93d1d03438ee9f1e2520f8e2043b9aa1c0')
 
 prepare() {
+  #Fix directory to apply the patch
+  sed -i 's|debian/vdfuse/vdfuse.c|src/debian/vdfuse/vdfuse.c|g' vdfuse_RAW.201206282340UTC.patch 
   [ -d "${srcdir}/includes" ] && rm -rf "${srcdir}/includes" ]
   cp -r "virtualbox-includes-${_headers}" "${srcdir}/includes"
   sed -i '1s,python,&2,' "${srcdir}/vdautomount"
+  patch -p1 -i "vdfuse_RAW.201206282340UTC.patch"
+
   patch -p1 -i "add-typedef-to-PARTITIONING_TYPE_vd.h.patch"
   patch -p1 -i "init-VDINTERFACEERROR_vdfuse.c.patch"
 }
